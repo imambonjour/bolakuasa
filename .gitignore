@@ -12,4 +12,4 @@ wheels/
 #big model files
 llama-b9118/
 models/
-input_record.wav input_test.wav output_response.wav
+*.wav
