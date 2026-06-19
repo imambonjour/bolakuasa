@@ -3,20 +3,39 @@ import sys
 import time
 import wave
 import subprocess
+import logging
 import requests
 import torch
 import pygame
 import select
 import tty
 import termios
-import re  # Ditambahkan untuk membersihkan tag <think>
+import re
 import numpy as np
 import onnxruntime as ort
 from qwen_asr import Qwen3ASRModel
 from piper.voice import PiperVoice
+from bear_face import (
+    BearAnimator,
+    KEYBINDS_IDLE,
+    KEYBINDS_RECORDING,
+    KEYBINDS_PLAYBACK,
+    KEYBINDS_PROCESSING,
+)
 
-# Configuration
-LLAMA_SERVER_PATH = "./llama-b9118/llama-server"
+# ─── Logging Setup ──────────────────────────────────────────────────────────
+# All debug output goes to a log file — terminal stays clean for the bear face.
+logging.basicConfig(
+    filename="voice_assistant.log",
+    filemode="a",
+    level=logging.DEBUG,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%H:%M:%S",
+)
+log = logging.getLogger("voice_assistant")
+
+# ─── Configuration ──────────────────────────────────────────────────────────
+LLAMA_SERVER_PATH = "./llama/llama-server"
 MODEL_PATH = "models/Qwen3.5-2B-Q4_K_M.gguf"
 ASR_MODEL_PATH = "models/Qwen3-ASR-0.6B"
 TTS_MODEL_PATH = "models/piper/id_ID-news_tts-medium.onnx"
@@ -139,15 +158,14 @@ class VoiceAssistantPipeline:
         self.tts_voice = None
         self.vad = None
         self.vad_iterator = None
+        self.bear = BearAnimator()
         # Initialize pygame mixer
         pygame.mixer.init()
 
     def start_llama_server(self):
-        print(f"Starting llama-server with model {MODEL_PATH} on port {PORT}...")
-        # Automatically determine threads
+        log.info(f"Starting llama-server with model {MODEL_PATH} on port {PORT}...")
         threads = max(1, (os.cpu_count() or 4) - 1)
 
-        # Build command with --mlock and --no-mmap to load model completely to RAM and lock it
         cmd = [
             LLAMA_SERVER_PATH,
             "-m", MODEL_PATH,
@@ -159,7 +177,6 @@ class VoiceAssistantPipeline:
             "--no-jinja"
         ]
 
-        # Run subprocess
         self.llama_proc = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
@@ -167,9 +184,8 @@ class VoiceAssistantPipeline:
             text=True
         )
 
-        # Wait for server to become ready
         ready = False
-        print("Waiting for llama-server to initialize and lock weights in RAM...")
+        log.info("Waiting for llama-server to initialize and lock weights in RAM...")
         for _ in range(30):
             try:
                 resp = requests.get(f"http://localhost:{PORT}/health", timeout=1)
@@ -181,48 +197,46 @@ class VoiceAssistantPipeline:
             time.sleep(1)
 
         if not ready:
-            # Check if process died
             poll = self.llama_proc.poll()
             if poll is not None:
                 stdout, stderr = self.llama_proc.communicate()
-                print(f"llama-server failed to start (exit code {poll})")
-                print("STDOUT:", stdout)
-                print("STDERR:", stderr)
+                log.error(f"llama-server failed to start (exit code {poll})")
+                log.error(f"STDOUT: {stdout}")
+                log.error(f"STDERR: {stderr}")
             raise RuntimeError("llama-server did not become ready within 30 seconds.")
 
-        print("llama-server is ready and running!")
+        log.info("llama-server is ready and running!")
 
     def load_asr_model(self):
-        print("Loading Qwen3-ASR model on CPU...")
-        # Since CPU is used, we load it in float32 for maximum compatibility
+        log.info("Loading Qwen3-ASR model on CPU...")
         self.asr_model = Qwen3ASRModel.from_pretrained(
             ASR_MODEL_PATH,
             dtype=torch.float32,
             device_map="cpu"
         )
-        print("Qwen3-ASR model loaded successfully!")
+        log.info("Qwen3-ASR model loaded successfully!")
 
     def load_tts_model(self):
-        print("Loading Piper TTS voice model...")
+        log.info("Loading Piper TTS voice model...")
         self.tts_voice = PiperVoice.load(TTS_MODEL_PATH)
-        print("Piper TTS loaded successfully!")
+        log.info("Piper TTS loaded successfully!")
 
     def load_vad(self):
-        print("Loading Silero VAD model...")
+        log.info("Loading Silero VAD model...")
         self.vad = SileroVAD(VAD_MODEL_PATH)
         self.vad_iterator = StreamingVADIterator(self.vad)
-        print("Silero VAD loaded successfully!")
+        log.info("Silero VAD loaded successfully!")
 
     def speech_to_text(self, audio_path):
-        print(f"Running ASR on: {audio_path}")
+        log.info(f"Running ASR on: {audio_path}")
         start_time = time.time()
         results = self.asr_model.transcribe(
             audio=audio_path,
-            language="Indonesian"  # Force Indonesian language
+            language="Indonesian"
         )
         duration = time.time() - start_time
         text = results[0].text
-        print(f"ASR transcription [{duration:.2f}s]: \"{text}\"")
+        log.info(f'ASR transcription [{duration:.2f}s]: "{text}"')
         return text
 
     def clean_llm_response(self, text):
@@ -241,7 +255,7 @@ class VoiceAssistantPipeline:
         return text
 
     def query_llm(self, user_text):
-        print("Sending prompt to Qwen3.5 via llama-server...")
+        log.info("Sending prompt to Qwen3.5 via llama-server...")
         system_prompt = (
             "Kamu adalah asisten AI berbasis suara.\n"
             "Gunakan Bahasa Indonesia.\n"
@@ -266,41 +280,41 @@ class VoiceAssistantPipeline:
         res_json = response.json()
         raw_response_text = res_json["choices"][0]["message"]["content"].strip()
 
-        # Bersihkan respon dari tag <think> sebelum dicetak dan dikirim ke TTS
         response_text = self.clean_llm_response(raw_response_text)
 
-        print(f"LLM response (Raw)  [{duration:.2f}s]: \"{raw_response_text}\"")
-        print(f"LLM response (Clean) [{duration:.2f}s]: \"{response_text}\"")
+        log.info(f'LLM response (Raw)  [{duration:.2f}s]: "{raw_response_text}"')
+        log.info(f'LLM response (Clean) [{duration:.2f}s]: "{response_text}"')
         return response_text
 
     def text_to_speech(self, text, output_path):
-        print(f"Synthesizing speech via Piper TTS to: {output_path}")
+        log.info(f"Synthesizing speech via Piper TTS to: {output_path}")
         start_time = time.time()
         with wave.open(output_path, "wb") as wav_file:
             self.tts_voice.synthesize_wav(text, wav_file)
         duration = time.time() - start_time
-        print(f"TTS synthesis complete [{duration:.2f}s].")
+        log.info(f"TTS synthesis complete [{duration:.2f}s].")
 
     def run_pipeline(self, input_audio_path, output_audio_path):
         # 1. Speech-to-Text
+        self.bear.set_status("⏳ Transcribing...", KEYBINDS_PROCESSING)
         transcribed_text = self.speech_to_text(input_audio_path)
         if not transcribed_text.strip():
-            print("Error: Transcribed text is empty.")
-            return
+            log.warning("Transcribed text is empty.")
+            return False
 
         # 2. LLM response
+        self.bear.set_status("⏳ Thinking...", KEYBINDS_PROCESSING)
         response_text = self.query_llm(transcribed_text)
 
         # 3. Text-to-Speech
+        self.bear.set_status("⏳ Generating speech...", KEYBINDS_PROCESSING)
         self.text_to_speech(response_text, output_audio_path)
-        print("Pipeline executed successfully!")
+        log.info("Pipeline executed successfully!")
+        return True
 
     def record_audio(self, output_path, kb_input):
-        print(
-            "\n[Recording] Listening... Speak now (auto-submits when you stop talking).",
-            flush=True,
-        )
-        print("[Recording] Press ENTER to cancel, 'Q' to quit.", flush=True)
+        self.bear.set_status("🎤 Listening...", KEYBINDS_RECORDING)
+        log.info("Recording started — listening for speech...")
 
         cmd = ["pw-record", "--channels=1", "--rate", str(SAMPLE_RATE), "--format=s16", "-a", "-"]
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
@@ -335,10 +349,11 @@ class VoiceAssistantPipeline:
                 result = self.vad_iterator.process(samples)
                 if result and "start" in result:
                     speech_start_sample = result["start"]
-                    print("[Recording] Speech detected...", flush=True)
+                    self.bear.set_status("🎤 Speech detected...", KEYBINDS_RECORDING)
+                    log.info("Speech detected.")
                 if result and "end" in result:
                     speech_end_sample = result["end"]
-                    print("[Recording] Speech ended. Submitting...", flush=True)
+                    log.info("Speech ended. Submitting...")
                     break
         finally:
             proc.terminate()
@@ -347,17 +362,21 @@ class VoiceAssistantPipeline:
         if quit_requested:
             return "quit"
         if cancelled:
-            print("[Recording] Cancelled.", flush=True)
+            log.info("Recording cancelled by user.")
             return None
         if speech_start_sample is None or speech_end_sample is None:
-            print("[Recording] No speech detected.", flush=True)
+            log.info("No speech detected.")
+            self.bear.set_status("No speech detected.", KEYBINDS_IDLE)
+            time.sleep(1)
             return None
 
         full_audio = np.concatenate(audio_chunks)
         trimmed = full_audio[speech_start_sample:speech_end_sample]
         min_samples = round(SAMPLE_RATE * VAD_MIN_SPEECH_MS / 1000)
         if len(trimmed) < min_samples:
-            print("[Recording] Speech too short, ignored.", flush=True)
+            log.info("Speech too short, ignored.")
+            self.bear.set_status("Speech too short.", KEYBINDS_IDLE)
+            time.sleep(1)
             return None
 
         pcm = np.clip(trimmed * 32767.0, -32768, 32767).astype(np.int16)
@@ -367,16 +386,19 @@ class VoiceAssistantPipeline:
             wav_file.setframerate(SAMPLE_RATE)
             wav_file.writeframes(pcm.tobytes())
 
-        print("[Recording] Captured speech.", flush=True)
+        log.info("Captured speech successfully.")
         return "ok"
 
     def play_audio_and_listen(self, audio_path, kb_input):
         if not os.path.exists(audio_path):
             return None
 
-        print("\n[Playback] Playing response... Press 'R' to interrupt and record a new question, or 'Q' to quit.", flush=True)
+        self.bear.set_status("🔊 Speaking...", KEYBINDS_PLAYBACK)
+        self.bear.start_talking()
+
         pygame.mixer.music.load(audio_path)
         pygame.mixer.music.play()
+        log.info("Playing response audio...")
 
         interrupted_by = None
         while pygame.mixer.music.get_busy():
@@ -389,6 +411,8 @@ class VoiceAssistantPipeline:
                     break
             time.sleep(0.05)
 
+        self.bear.stop_talking()
+
         # Clear out any remaining characters in standard input buffer
         while kb_input.get_char():
             pass
@@ -396,37 +420,58 @@ class VoiceAssistantPipeline:
         return interrupted_by
 
     def cleanup(self):
+        self.bear.stop()
         if self.llama_proc:
-            print("Terminating llama-server...")
+            log.info("Terminating llama-server...")
             self.llama_proc.terminate()
             try:
                 self.llama_proc.wait(timeout=5)
             except subprocess.TimeoutExpired:
                 self.llama_proc.kill()
-            print("llama-server stopped.")
+            log.info("llama-server stopped.")
+
+def _print_loading(step, total, message):
+    """Simple text-based loading indicator (no bear face)."""
+    bar_len = 20
+    filled = int(bar_len * step / total)
+    bar = "█" * filled + "░" * (bar_len - filled)
+    sys.stdout.write(f"\r  [{bar}] ({step}/{total}) {message}")
+    sys.stdout.flush()
 
 def main():
     pipeline = VoiceAssistantPipeline()
     kb = KeyboardInput()
 
     try:
-        # Start and load everything
+        # ── Loading phase: simple text progress, no bear ──────────────
+        sys.stdout.write("\033[H\033[2J")  # clear screen
+        sys.stdout.write("\n  🐻 Voice Assistant — Loading...\n\n")
+        sys.stdout.flush()
+
+        _print_loading(1, 4, "Starting LLM server...")
         pipeline.start_llama_server()
+
+        _print_loading(2, 4, "Loading ASR model...")
         pipeline.load_asr_model()
+
+        _print_loading(3, 4, "Loading TTS model...")
         pipeline.load_tts_model()
+
+        _print_loading(4, 4, "Loading VAD model...")
         pipeline.load_vad()
 
-        # Define files
+        sys.stdout.write("\n\n  ✓ All models loaded!\n")
+        sys.stdout.flush()
+        time.sleep(0.5)
+
+        # ── Bear face takes over ──────────────────────────────────────
         input_audio = "input_record.wav"
         output_audio = "output_response.wav"
 
         kb.enable_raw()
 
-        print("\n==============================================")
-        print("Voice Assistant is ready!")
-        print("Press 'R' to start listening (auto-detects end of speech).")
-        print("Press 'Q' to quit the application.")
-        print("==============================================\n", flush=True)
+        pipeline.bear.set_status("", KEYBINDS_IDLE)
+        pipeline.bear.start()
 
         trigger_record = False
         while True:
@@ -444,14 +489,18 @@ def main():
                 if record_result == 'quit':
                     break
                 if record_result != 'ok':
-                    print("\nPress 'R' to listen, 'Q' to quit.", flush=True)
+                    pipeline.bear.set_status("", KEYBINDS_IDLE)
                     continue
 
-                # Process
-                print("\nProcessing ASR, LLM and TTS...", flush=True)
-                pipeline.run_pipeline(input_audio, output_audio)
+                # Process pipeline
+                success = pipeline.run_pipeline(input_audio, output_audio)
+                if not success:
+                    pipeline.bear.set_status("Could not process.", KEYBINDS_IDLE)
+                    time.sleep(1)
+                    pipeline.bear.set_status("", KEYBINDS_IDLE)
+                    continue
 
-                # Play response and check if interrupted
+                # Play response with talk animation
                 action = pipeline.play_audio_and_listen(output_audio, kb)
                 if action == 'q':
                     break
@@ -459,11 +508,13 @@ def main():
                     trigger_record = True
                     continue
                 else:
-                    print("\nPress 'R' to listen, 'Q' to quit.", flush=True)
+                    pipeline.bear.set_status("", KEYBINDS_IDLE)
             time.sleep(0.05)
 
     except Exception as e:
-        print(f"\nAn error occurred: {e}", file=sys.stderr)
+        log.error(f"An error occurred: {e}", exc_info=True)
+        # Also print to stderr since this is a fatal error
+        print(f"\nFatal error: {e}", file=sys.stderr)
     finally:
         kb.disable_raw()
         pipeline.cleanup()

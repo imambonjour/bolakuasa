@@ -1,0 +1,203 @@
+15:06:05 [INFO] Starting LLM llama-server: ./llama-b9118/llama-server -m models/Qwen3.5-2B-Q4_K_M.gguf --port 8080 --mlock --no-mmap -t 11 -c 2048 --no-jinja
+15:06:05 [INFO] Waiting for LLM llama-server on port 8080...
+15:06:05 [DEBUG] Starting new HTTP connection (1): localhost:8080
+15:06:06 [DEBUG] Starting new HTTP connection (1): localhost:8080
+15:06:06 [DEBUG] http://localhost:8080 "GET /health HTTP/1.1" 503 75
+15:06:07 [DEBUG] Starting new HTTP connection (1): localhost:8080
+15:06:07 [DEBUG] http://localhost:8080 "GET /health HTTP/1.1" 503 75
+15:06:08 [DEBUG] Starting new HTTP connection (1): localhost:8080
+15:06:08 [DEBUG] http://localhost:8080 "GET /health HTTP/1.1" 200 15
+15:06:08 [INFO] LLM llama-server is ready.
+15:06:08 [INFO] Starting ASR llama-server: ./llama-b9118/llama-server -m models/asr/Qwen3-ASR-0.6B-Q8_0.gguf --mmproj models/asr/mmproj-Qwen3-ASR-0.6B-Q8_0.gguf -a qwen3-asr --port 8081 --media-path . --mlock --no-mmap -t 11 -c 2048 --no-webui
+15:06:08 [INFO] Waiting for ASR llama-server on port 8081...
+15:06:08 [DEBUG] Starting new HTTP connection (1): localhost:8081
+15:06:09 [DEBUG] Starting new HTTP connection (1): localhost:8081
+15:06:09 [DEBUG] http://localhost:8081 "GET /health HTTP/1.1" 503 75
+15:06:10 [DEBUG] Starting new HTTP connection (1): localhost:8081
+15:06:10 [DEBUG] http://localhost:8081 "GET /health HTTP/1.1" 200 15
+15:06:10 [INFO] ASR llama-server is ready.
+15:06:10 [INFO] Loading Piper TTS voice model...
+15:06:10 [DEBUG] Guessing voice config path: models/piper/id_ID-news_tts-medium.onnx.json
+15:06:11 [INFO] Piper TTS loaded successfully.
+15:06:11 [INFO] Loading Silero VAD model...
+15:06:11 [INFO] Silero VAD loaded successfully.
+15:06:13 [INFO] Recording started, listening for speech...
+15:06:14 [INFO] Speech detected.
+15:06:15 [INFO] Speech ended. Submitting...
+15:06:15 [INFO] Captured speech successfully.
+15:06:15 [INFO] Running GGUF ASR on: input_record.wav
+15:06:15 [DEBUG] Starting new HTTP connection (1): localhost:8081
+15:06:20 [DEBUG] http://localhost:8081 "POST /v1/audio/transcriptions HTTP/1.1" 200 189
+15:06:20 [INFO] ASR transcription [5.47s]: "language None<asr_text>"
+15:06:20 [INFO] Sending prompt to Qwen3.5 via llama-server...
+15:06:20 [DEBUG] Starting new HTTP connection (1): localhost:8080
+15:06:22 [DEBUG] http://localhost:8080 "POST /v1/chat/completions HTTP/1.1" 200 729
+15:06:22 [INFO] LLM response (Raw)  [1.44s]: "<think>
+
+</think>
+
+Saya siap membantu! Silakan ajukan pertanyaan atau perintah yang Anda inginkan."
+15:06:22 [INFO] LLM response (Clean) [1.44s]: "Saya siap membantu! Silakan ajukan pertanyaan atau perintah yang Anda inginkan."
+15:06:22 [INFO] Synthesizing speech via Piper TTS to: output_response.wav
+15:06:22 [DEBUG] text=Saya siap membantu! Silakan ajukan pertanyaan atau perintah yang Anda inginkan., phonemes=[['s', 'ˈ', 'a', 'j', 'a', ' ', 's', 'ˈ', 'i', 'a', 'p', ' ', 'm', 'ə', 'm', 'b', 'ˈ', 'a', 'n', 't', 'u', '!'], ['s', 'i', 'l', 'ˈ', 'a', 'k', 'a', 'n', ' ', 'a', 'd', 'ʒ', 'ˈ', 'u', 'k', 'a', 'n', ' ', 'p', 'ə', 'r', 't', 'a', 'ɲ', 'ˈ', 'a', 'a', 'n', ' ', 'ˌ', 'a', 't', 'a', 'ʊ', ' ', 'p', 'ə', 'r', 'ˈ', 'i', 'n', 't', 'a', 'h', ' ', 'j', 'a', 'ŋ', ' ', 'ˈ', 'a', 'n', 'd', 'a', ' ', 'i', 'ŋ', 'ˈ', 'i', 'n', 'k', 'a', 'n', '.']]
+15:06:22 [INFO] TTS synthesis complete [0.28s].
+15:06:22 [INFO] Pipeline executed successfully.
+15:06:22 [INFO] Playing response audio...
+15:06:28 [INFO] Recording started, listening for speech...
+15:06:29 [INFO] Speech detected.
+15:06:32 [INFO] Speech ended. Submitting...
+15:06:32 [INFO] Captured speech successfully.
+15:06:32 [INFO] Running GGUF ASR on: input_record.wav
+15:06:32 [DEBUG] Starting new HTTP connection (1): localhost:8081
+15:06:37 [DEBUG] http://localhost:8081 "POST /v1/audio/transcriptions HTTP/1.1" 200 233
+15:06:37 [INFO] ASR transcription [5.80s]: "language None<asr_text>Tapi apa yang ada di sini pun ada di dunia."
+15:06:37 [INFO] Sending prompt to Qwen3.5 via llama-server...
+15:06:37 [DEBUG] Starting new HTTP connection (1): localhost:8080
+15:06:39 [DEBUG] http://localhost:8080 "POST /v1/chat/completions HTTP/1.1" 200 703
+15:06:39 [INFO] LLM response (Raw)  [1.33s]: "<think>
+
+</think>
+
+Tapi apa yang ada di sini pun ada di dunia."
+15:06:39 [INFO] LLM response (Clean) [1.33s]: "Tapi apa yang ada di sini pun ada di dunia."
+15:06:39 [INFO] Synthesizing speech via Piper TTS to: output_response.wav
+15:06:39 [DEBUG] text=Tapi apa yang ada di sini pun ada di dunia., phonemes=[['t', 'ˈ', 'a', 'p', 'i', ' ', 'ˈ', 'a', 'p', 'a', ' ', 'j', 'a', 'ŋ', ' ', 'ˈ', 'a', 'd', 'a', ' ', 'd', 'i', ' ', 's', 'ˈ', 'i', 'n', 'i', ' ', 'p', 'ˈ', 'u', 'n', ' ', 'ˈ', 'a', 'd', 'a', ' ', 'd', 'i', ' ', 'd', 'u', 'n', 'ˈ', 'i', 'a', '.']]
+15:06:39 [INFO] TTS synthesis complete [0.14s].
+15:06:39 [INFO] Pipeline executed successfully.
+15:06:39 [INFO] Playing response audio...
+15:06:43 [INFO] Recording started, listening for speech...
+15:06:44 [INFO] Speech detected.
+15:06:47 [INFO] Speech ended. Submitting...
+15:06:47 [INFO] Captured speech successfully.
+15:06:47 [INFO] Running GGUF ASR on: input_record.wav
+15:06:47 [DEBUG] Starting new HTTP connection (1): localhost:8081
+15:06:52 [DEBUG] http://localhost:8081 "POST /v1/audio/transcriptions HTTP/1.1" 200 219
+15:06:52 [INFO] ASR transcription [5.52s]: "language None<asr_text>Karena paman usia para tidur."
+15:06:52 [INFO] Sending prompt to Qwen3.5 via llama-server...
+15:06:52 [DEBUG] Starting new HTTP connection (1): localhost:8080
+15:06:55 [DEBUG] http://localhost:8080 "POST /v1/chat/completions HTTP/1.1" 200 813
+15:06:55 [INFO] LLM response (Raw)  [2.27s]: "<think>
+
+</think>
+
+Istilah "Karena paman usia para tidur" tidak ada artinya secara bahasa Indonesia. Kemungkinan besar ini adalah kesalahan ketik atau pengucapan salah."
+15:06:55 [INFO] LLM response (Clean) [2.27s]: "Istilah "Karena paman usia para tidur" tidak ada artinya secara bahasa Indonesia. Kemungkinan besar ini adalah kesalahan ketik atau pengucapan salah."
+15:06:55 [INFO] Synthesizing speech via Piper TTS to: output_response.wav
+15:06:55 [DEBUG] text=Istilah "Karena paman usia para tidur" tidak ada artinya secara bahasa Indonesia. Kemungkinan besar ini adalah kesalahan ketik atau pengucapan salah., phonemes=[['i', 's', 't', 'ˈ', 'i', 'l', 'a', 'h', ' ', 'k', 'a', 'r', 'ˈ', 'ɛ', 'n', 'a', ' ', 'p', 'ˈ', 'a', 'm', 'a', 'n', ' ', 'u', 's', 'ˈ', 'i', 'a', ' ', 'p', 'ˈ', 'a', 'r', 'a', ' ', 't', 'ˈ', 'i', 'd', 'u', 'r', ' ', 't', 'ˈ', 'i', 'd', 'a', 'k', ' ', 'ˈ', 'a', 'd', 'a', ' ', 'a', 'r', 't', 'ˈ', 'i', 'ɲ', 'a', ' ', 's', 'ə', 't', 'ʃ', 'ˈ', 'a', 'r', 'a', ' ', 'b', 'a', 'h', 'ˈ', 'a', 's', 'a', ' ', 'ˌ', 'i', 'n', 'd', 'o', 'n', 'ə', 's', 'ˈ', 'i', 'a', '.'], ['k', 'ə', 'm', 'u', 'ŋ', 'k', 'ˈ', 'i', 'n', 'a', 'n', ' ', 'b', 'ˈ', 'ɛ', 's', 'a', 'r', ' ', 'ˈ', 'i', 'n', 'i', ' ', 'a', 'd', 'ˌ', 'a', 'l', 'a', 'h', ' ', 'k', 'ə', 's', 'a', 'l', 'ˈ', 'a', 'h', 'a', 'n', ' ', 'k', 'ˈ', 'ɛ', 't', 'i', 'k', ' ', 'ˌ', 'a', 't', 'a', 'ʊ', ' ', 'p', 'ə', 'ŋ', 'u', 't', 'ʃ', 'ˈ', 'a', 'p', 'a', 'n', ' ', 's', 'ˈ', 'a', 'l', 'a', 'h', '.']]
+15:06:55 [INFO] TTS synthesis complete [0.45s].
+15:06:55 [INFO] Pipeline executed successfully.
+15:06:55 [INFO] Playing response audio...
+15:07:07 [INFO] Recording started, listening for speech...
+15:07:08 [INFO] Speech detected.
+15:07:11 [INFO] Speech ended. Submitting...
+15:07:11 [INFO] Captured speech successfully.
+15:07:11 [INFO] Running GGUF ASR on: input_record.wav
+15:07:11 [DEBUG] Starting new HTTP connection (1): localhost:8081
+15:07:17 [DEBUG] http://localhost:8081 "POST /v1/audio/transcriptions HTTP/1.1" 200 213
+15:07:17 [INFO] ASR transcription [5.55s]: "language None<asr_text>Why, why need to sleep?"
+15:07:17 [INFO] Sending prompt to Qwen3.5 via llama-server...
+15:07:17 [DEBUG] Starting new HTTP connection (1): localhost:8080
+15:07:24 [DEBUG] http://localhost:8080 "POST /v1/chat/completions HTTP/1.1" 200 1222
+15:07:24 [INFO] LLM response (Raw)  [7.54s]: "<think>
+Thinking Process:
+
+1.  **Analyze the Request:**
+    *   **Role:** Voice-based AI Assistant (asisten AI berbasis suara).
+    *   **Language:** Indonesian (Bahasa Indonesia).
+    *   **Style:** Clear, concise, direct to the point (jelas, ringkas, langsung pada intinya).
+    *   **Constraint:** Avoid overly long answers (hindari jawaban yang terlalu panjang).
+    *   **Input:** "language None<asr_text>Why, why need to sleep?" (Why, why need to sleep?)
+    *   **Task:** Answer the question about the necessity of sleep in a concise Indonesian manner.
+
+2.  **Determine"
+15:07:24 [INFO] LLM response (Clean) [7.54s]: "Thinking Process: 1. **Analyze the Request:** * **Role:** Voice-based AI Assistant (asisten AI berbasis suara). * **Language:** Indonesian (Bahasa Indonesia). * **Style:** Clear, concise, direct to the point (jelas, ringkas, langsung pada intinya). * **Constraint:** Avoid overly long answers (hindari jawaban yang terlalu panjang). * **Input:** "language None<asr_text>Why, why need to sleep?" (Why, why need to sleep?) * **Task:** Answer the question about the necessity of sleep in a concise Indonesian manner. 2. **Determine"
+15:07:24 [INFO] Synthesizing speech via Piper TTS to: output_response.wav
+15:07:24 [DEBUG] text=Thinking Process: 1. **Analyze the Request:** * **Role:** Voice-based AI Assistant (asisten AI berbasis suara). * **Language:** Indonesian (Bahasa Indonesia). * **Style:** Clear, concise, direct to the point (jelas, ringkas, langsung pada intinya). * **Constraint:** Avoid overly long answers (hindari jawaban yang terlalu panjang). * **Input:** "language None<asr_text>Why, why need to sleep?" (Why, why need to sleep?) * **Task:** Answer the question about the necessity of sleep in a concise Indonesian manner. 2. **Determine, phonemes=[['t', 'h', 'ˈ', 'i', 'n', 'k', 'i', 'ŋ', ' ', 'p', 'r', 'ˈ', 'o', 't', 'ʃ', 'ə', 's', ':', ' ', 's', 'ˈ', 'a', 't', 'u', '.'], ['a', 'n', 'ˈ', 'a', 'l', 'j', 'z', 'ə', ' ', 't', 'h', 'ˈ', 'ɛ', ' ', 'r', 'ˈ', 'ɛ', 'k', 'w', 'ə', 's', 't', ' ', 'b', 'ˈ', 'i', 'n', 't', 'a', 'ŋ', ' ', 'r', 'ˈ', 'o', 'l', 'ə', ' ', 'v', 'o', 'ˈ', 'i', 't', 'ʃ', 'ə', 'b', 'ˈ', 'a', 's', 'ə', 'd', ' ', 'ˌ', 'a', 'ˈ', 'i', ' ', 'a', 's', 'ˈ', 'i', 's', 't', 'a', 'n', 't', ' ', 'a', 's', 'ˈ', 'i', 's', 't', 'ə', 'n', ' ', 'ˌ', 'a', 'ˈ', 'i', ' ', 'b', 'ə', 'r', 'b', 'ˈ', 'a', 's', 'i', 's', ' ', 's', 'u', 'ˈ', 'a', 'r', 'a', '.'], ['b', 'ˈ', 'i', 'n', 't', 'a', 'ŋ', ' ', 'l', 'ˌ', 'a', 'ŋ', 'u', 'ˈ', 'a', 'ɡ', 'ə', ' ', 'ˌ', 'i', 'n', 'd', 'o', 'n', 'ə', 's', 'ˈ', 'i', 'a', 'n', ' ', 'b', 'a', 'h', 'ˈ', 'a', 's', 'a', ' ', 'ˌ', 'i', 'n', 'd', 'o', 'n', 'ə', 's', 'ˈ', 'i', 'a', '.'], ['b', 'ˈ', 'i', 'n', 't', 'a', 'ŋ', ' ', 's', 't', 'j', 'l', 'ˈ', 'ɛ', ' ', 't', 'ʃ', 'l', 'ˈ', 'ɛ', 'a', 'r', ',', ' ', 't', 'ʃ', 'o', 'n', 't', 'ʃ', 'ˈ', 'i', 's', 'ə', ',', ' ', 'd', 'ˈ', 'i', 'r', 'ə', 't', 'ʃ', 't', ' ', 't', 'ˈ', 'o', ' ', 't', 'h', 'ˈ', 'ɛ', ' ', 'p', 'ˈ', 'o', 'i', 'n', 't', ' ', 'd', 'ʒ', 'ˈ', 'ɛ', 'l', 'a', 's', ',', ' ', 'r', 'ˈ', 'i', 'ŋ', 'k', 'a', 's', ',', ' ', 'l', 'ˈ', 'a', 'ŋ', 's', 'u', 'ŋ', ' ', 'p', 'ˌ', 'a', 'd', 'a', ' ', 'i', 'n', 't', 'ˈ', 'i', 'ɲ', 'a', '.'], ['b', 'ˈ', 'i', 'n', 't', 'a', 'ŋ', ' ', 't', 'ʃ', 'ˈ', 'o', 'n', 's', 't', 'r', 'a', 'ɪ', 'n', 't', ' ', 'a', 'v', 'ˈ', 'o', 'i', 'd', ' ', 'ˈ', 'o', 'v', 'ə', 'r', 'l', 'j', ' ', 'l', 'ˈ', 'o', 'ŋ', ' ', 'ˈ', 'a', 'n', 's', 'w', 'ə', 'r', 's', ' ', 'h', 'i', 'n', 'd', 'ˈ', 'a', 'r', 'i', ' ', 'd', 'ʒ', 'a', 'w', 'ˈ', 'a', 'b', 'a', 'n', ' ', 'j', 'a', 'ŋ', ' ', 't', 'ə', 'r', 'l', 'ˈ', 'a', 'l', 'u', ' ', 'p', 'ˈ', 'a', 'n', 'd', 'ʒ', 'a', 'ŋ', '.'], ['b', 'ˈ', 'i', 'n', 't', 'a', 'ŋ', ' ', 'ˈ', 'i', 'n', 'p', 'u', 't', ' ', 'l', 'ˌ', 'a', 'ŋ', 'u', 'ˈ', 'a', 'ɡ', 'ə', ' ', 'n', 'ˈ', 'o', 'n', 'ə', ' ', 'ˈ', 'a', 's', 'r', ' ', 't', 'ˈ', 'ɛ', 'k', 's', 't', ' ', 'w', 'h', 'j', ',', ' ', 'w', 'h', 'j', ' ', 'n', 'ˈ', 'ɛ', 'ə', 'd', ' ', 't', 'ˈ', 'o', ' ', 's', 'l', 'ˈ', 'ɛ', 'ə', 'p', '?'], ['w', 'h', 'j', ',', ' ', 'w', 'h', 'j', ' ', 'n', 'ˈ', 'ɛ', 'ə', 'd', ' ', 't', 'ˈ', 'o', ' ', 's', 'l', 'ˈ', 'ɛ', 'ə', 'p', '?'], ['b', 'ˈ', 'i', 'n', 't', 'a', 'ŋ', ' ', 't', 'ˈ', 'a', 's', 'k', ' ', 'ˈ', 'a', 'n', 's', 'w', 'ə', 'r', ' ', 't', 'h', 'ˈ', 'ɛ', ' ', 'k', 'w', 'ə', 's', 't', 'ˈ', 'i', 'o', 'n', ' ', 'a', 'b', 'ˈ', 'o', 'u', 't', ' ', 't', 'h', 'ˈ', 'ɛ', ' ', 'n', 'ə', 't', 'ʃ', 'ˈ', 'ɛ', 's', 'i', 't', 'j', ' ', 'ˈ', 'o', 'f', ' ', 's', 'l', 'ˈ', 'ɛ', 'ə', 'p', ' ', 'ˈ', 'i', 'n', ' ', 'ˈ', 'a', ' ', 't', 'ʃ', 'o', 'n', 't', 'ʃ', 'ˈ', 'i', 's', 'ə', ' ', 'ˌ', 'i', 'n', 'd', 'o', 'n', 'ə', 's', 'ˈ', 'i', 'a', 'n', ' ', 'm', 'ˈ', 'a', 'n', 'n', 'ə', 'r', '.'], ['d', 'ˈ', 'u', 'a', '.'], ['d', 'ˌ', 'ɛ', 't', 'ə', 'r', 'm', 'ˈ', 'i', 'n', 'ə']]
+15:07:26 [INFO] TTS synthesis complete [1.65s].
+15:07:26 [INFO] Pipeline executed successfully.
+15:07:26 [INFO] Playing response audio...
+15:07:39 [INFO] Recording started, listening for speech...
+15:07:39 [INFO] Speech detected.
+15:07:40 [INFO] Speech ended. Submitting...
+15:07:40 [INFO] Speech too short, ignored.
+15:07:43 [INFO] Recording started, listening for speech...
+15:07:44 [INFO] Speech detected.
+15:07:46 [INFO] Speech ended. Submitting...
+15:07:46 [INFO] Captured speech successfully.
+15:07:46 [INFO] Running GGUF ASR on: input_record.wav
+15:07:46 [DEBUG] Starting new HTTP connection (1): localhost:8081
+15:07:51 [DEBUG] http://localhost:8081 "POST /v1/audio/transcriptions HTTP/1.1" 200 200
+15:07:51 [INFO] ASR transcription [5.45s]: "language None<asr_text>Siapa kamu?"
+15:07:51 [INFO] Sending prompt to Qwen3.5 via llama-server...
+15:07:51 [DEBUG] Starting new HTTP connection (1): localhost:8080
+15:07:53 [DEBUG] http://localhost:8080 "POST /v1/chat/completions HTTP/1.1" 200 772
+15:07:53 [INFO] LLM response (Raw)  [1.77s]: "<think>
+
+</think>
+
+Kamu adalah asisten AI berbasis suara. Saya bisa mendengar dan berbicara dengan kamu. Ada yang bisa saya bantu?"
+15:07:53 [INFO] LLM response (Clean) [1.77s]: "Kamu adalah asisten AI berbasis suara. Saya bisa mendengar dan berbicara dengan kamu. Ada yang bisa saya bantu?"
+15:07:53 [INFO] Synthesizing speech via Piper TTS to: output_response.wav
+15:07:53 [DEBUG] text=Kamu adalah asisten AI berbasis suara. Saya bisa mendengar dan berbicara dengan kamu. Ada yang bisa saya bantu?, phonemes=[['k', 'ˈ', 'a', 'm', 'u', ' ', 'a', 'd', 'ˌ', 'a', 'l', 'a', 'h', ' ', 'a', 's', 'ˈ', 'i', 's', 't', 'ə', 'n', ' ', 'ˌ', 'a', 'ˈ', 'i', ' ', 'b', 'ə', 'r', 'b', 'ˈ', 'a', 's', 'i', 's', ' ', 's', 'u', 'ˈ', 'a', 'r', 'a', '.'], ['s', 'ˈ', 'a', 'j', 'a', ' ', 'b', 'ˈ', 'i', 's', 'a', ' ', 'm', 'ə', 'n', 'd', 'ˈ', 'ɛ', 'ŋ', 'a', 'r', ' ', 'd', 'a', 'n', ' ', 'b', 'ə', 'r', 'b', 'i', 't', 'ʃ', 'ˈ', 'a', 'r', 'a', ' ', 'd', 'ˈ', 'ɛ', 'ŋ', 'a', 'n', ' ', 'k', 'ˈ', 'a', 'm', 'u', '.'], ['ˈ', 'a', 'd', 'a', ' ', 'j', 'a', 'ŋ', ' ', 'b', 'ˈ', 'i', 's', 'a', ' ', 's', 'ˈ', 'a', 'j', 'a', ' ', 'b', 'ˈ', 'a', 'n', 't', 'u', '?']]
+15:07:54 [INFO] TTS synthesis complete [0.36s].
+15:07:54 [INFO] Pipeline executed successfully.
+15:07:54 [INFO] Playing response audio...
+15:08:02 [INFO] Recording started, listening for speech...
+15:08:03 [INFO] Speech detected.
+15:08:04 [INFO] Speech ended. Submitting...
+15:08:04 [INFO] Speech too short, ignored.
+15:08:06 [INFO] Recording started, listening for speech...
+15:08:07 [INFO] Speech detected.
+15:08:08 [INFO] Speech ended. Submitting...
+15:08:08 [INFO] Captured speech successfully.
+15:08:08 [INFO] Running GGUF ASR on: input_record.wav
+15:08:08 [DEBUG] Starting new HTTP connection (1): localhost:8081
+15:08:13 [DEBUG] http://localhost:8081 "POST /v1/audio/transcriptions HTTP/1.1" 200 189
+15:08:13 [INFO] ASR transcription [5.34s]: "language None<asr_text>"
+15:08:13 [INFO] Sending prompt to Qwen3.5 via llama-server...
+15:08:13 [DEBUG] Starting new HTTP connection (1): localhost:8080
+15:08:15 [DEBUG] http://localhost:8080 "POST /v1/chat/completions HTTP/1.1" 200 784
+15:08:15 [INFO] LLM response (Raw)  [1.71s]: "<think>
+
+</think>
+
+Tidak ada suara yang didengar. Silakan coba lagi atau hubungi operator layanan pelanggan jika Anda membutuhkan bantuan lain."
+15:08:15 [INFO] LLM response (Clean) [1.71s]: "Tidak ada suara yang didengar. Silakan coba lagi atau hubungi operator layanan pelanggan jika Anda membutuhkan bantuan lain."
+15:08:15 [INFO] Synthesizing speech via Piper TTS to: output_response.wav
+15:08:15 [DEBUG] text=Tidak ada suara yang didengar. Silakan coba lagi atau hubungi operator layanan pelanggan jika Anda membutuhkan bantuan lain., phonemes=[['t', 'ˈ', 'i', 'd', 'a', 'k', ' ', 'ˈ', 'a', 'd', 'a', ' ', 's', 'u', 'ˈ', 'a', 'r', 'a', ' ', 'j', 'a', 'ŋ', ' ', 'd', 'i', 'd', 'ˈ', 'ɛ', 'ŋ', 'a', 'r', '.'], ['s', 'i', 'l', 'ˈ', 'a', 'k', 'a', 'n', ' ', 't', 'ʃ', 'ˈ', 'o', 'b', 'a', ' ', 'l', 'ˈ', 'a', 'ɡ', 'i', ' ', 'ˌ', 'a', 't', 'a', 'ʊ', ' ', 'h', 'u', 'b', 'ˈ', 'u', 'ŋ', 'i', ' ', 'ˌ', 'o', 'p', 'ə', 'r', 'ˈ', 'a', 't', 'ɔ', 'r', ' ', 'l', 'a', 'j', 'ˈ', 'a', 'n', 'a', 'n', ' ', 'p', 'ə', 'l', 'ˈ', 'a', 'ŋ', 'ɡ', 'a', 'n', ' ', 'd', 'ʒ', 'ˈ', 'i', 'k', 'a', ' ', 'ˈ', 'a', 'n', 'd', 'a', ' ', 'm', 'ə', 'm', 'b', 'u', 't', 'ˈ', 'u', 'h', 'k', 'a', 'n', ' ', 'b', 'a', 'n', 't', 'ˈ', 'u', 'a', 'n', ' ', 'l', 'ˈ', 'a', 'ɪ', 'n', '.']]
+15:08:15 [INFO] TTS synthesis complete [0.38s].
+15:08:15 [INFO] Pipeline executed successfully.
+15:08:15 [INFO] Playing response audio...
+15:08:17 [INFO] Recording started, listening for speech...
+15:08:18 [INFO] Speech detected.
+15:08:21 [INFO] Speech ended. Submitting...
+15:08:21 [INFO] Captured speech successfully.
+15:08:21 [INFO] Running GGUF ASR on: input_record.wav
+15:08:21 [DEBUG] Starting new HTTP connection (1): localhost:8081
+15:08:27 [DEBUG] http://localhost:8081 "POST /v1/audio/transcriptions HTTP/1.1" 200 218
+15:08:27 [INFO] ASR transcription [5.59s]: "language None<asr_text>Salam untuk kalo laptop lah."
+15:08:27 [INFO] Sending prompt to Qwen3.5 via llama-server...
+15:08:27 [DEBUG] Starting new HTTP connection (1): localhost:8080
+15:08:35 [DEBUG] http://localhost:8080 "POST /v1/chat/completions HTTP/1.1" 200 1214
+15:08:35 [INFO] LLM response (Raw)  [8.31s]: "<think>
+Thinking Process:
+
+1.  **Analyze the Request:**
+    *   **Role:** Voice AI Assistant (asisten AI berbasis suara).
+    *   **Language:** Indonesian.
+    *   **Style:** Clear, concise, direct, short response.
+    *   **Input:** "language None<asr_text>Salam untuk kalo laptop lah." (Hello, if it's a laptop, that's fine.)
+    *   **Task:** Respond to the ASR input (Speech-to-Text) while maintaining the persona and constraints.
+
+2.  **Interpret the Input:**
+    *   The user is asking about laptop compatibility or preference ("kalo laptop lah" = if it's"
+15:08:35 [INFO] LLM response (Clean) [8.31s]: "Thinking Process: 1. **Analyze the Request:** * **Role:** Voice AI Assistant (asisten AI berbasis suara). * **Language:** Indonesian. * **Style:** Clear, concise, direct, short response. * **Input:** "language None<asr_text>Salam untuk kalo laptop lah." (Hello, if it's a laptop, that's fine.) * **Task:** Respond to the ASR input (Speech-to-Text) while maintaining the persona and constraints. 2. **Interpret the Input:** * The user is asking about laptop compatibility or preference ("kalo laptop lah" = if it's"
+15:08:35 [INFO] Synthesizing speech via Piper TTS to: output_response.wav
+15:08:35 [DEBUG] text=Thinking Process: 1. **Analyze the Request:** * **Role:** Voice AI Assistant (asisten AI berbasis suara). * **Language:** Indonesian. * **Style:** Clear, concise, direct, short response. * **Input:** "language None<asr_text>Salam untuk kalo laptop lah." (Hello, if it's a laptop, that's fine.) * **Task:** Respond to the ASR input (Speech-to-Text) while maintaining the persona and constraints. 2. **Interpret the Input:** * The user is asking about laptop compatibility or preference ("kalo laptop lah" = if it's, phonemes=[['t', 'h', 'ˈ', 'i', 'n', 'k', 'i', 'ŋ', ' ', 'p', 'r', 'ˈ', 'o', 't', 'ʃ', 'ə', 's', ':', ' ', 's', 'ˈ', 'a', 't', 'u', '.'], ['a', 'n', 'ˈ', 'a', 'l', 'j', 'z', 'ə', ' ', 't', 'h', 'ˈ', 'ɛ', ' ', 'r', 'ˈ', 'ɛ', 'k', 'w', 'ə', 's', 't', ' ', 'b', 'ˈ', 'i', 'n', 't', 'a', 'ŋ', ' ', 'r', 'ˈ', 'o', 'l', 'ə', ' ', 'v', 'o', 'ˈ', 'i', 't', 'ʃ', 'ə', ' ', 'ˌ', 'a', 'ˈ', 'i', ' ', 'a', 's', 'ˈ', 'i', 's', 't', 'a', 'n', 't', ' ', 'a', 's', 'ˈ', 'i', 's', 't', 'ə', 'n', ' ', 'ˌ', 'a', 'ˈ', 'i', ' ', 'b', 'ə', 'r', 'b', 'ˈ', 'a', 's', 'i', 's', ' ', 's', 'u', 'ˈ', 'a', 'r', 'a', '.'], ['b', 'ˈ', 'i', 'n', 't', 'a', 'ŋ', ' ', 'l', 'ˌ', 'a', 'ŋ', 'u', 'ˈ', 'a', 'ɡ', 'ə', ' ', 'ˌ', 'i', 'n', 'd', 'o', 'n', 'ə', 's', 'ˈ', 'i', 'a', 'n', '.'], ['b', 'ˈ', 'i', 'n', 't', 'a', 'ŋ', ' ', 's', 't', 'j', 'l', 'ˈ', 'ɛ', ' ', 't', 'ʃ', 'l', 'ˈ', 'ɛ', 'a', 'r', ',', ' ', 't', 'ʃ', 'o', 'n', 't', 'ʃ', 'ˈ', 'i', 's', 'ə', ',', ' ', 'd', 'ˈ', 'i', 'r', 'ə', 't', 'ʃ', 't', ',', ' ', 's', 'h', 'ˈ', 'ɔ', 'r', 't', ' ', 'r', 'ə', 's', 'p', 'ˈ', 'o', 'n', 's', 'ə', '.'], ['b', 'ˈ', 'i', 'n', 't', 'a', 'ŋ', ' ', 'ˈ', 'i', 'n', 'p', 'u', 't', ' ', 'l', 'ˌ', 'a', 'ŋ', 'u', 'ˈ', 'a', 'ɡ', 'ə', ' ', 'n', 'ˈ', 'o', 'n', 'ə', ' ', 'ˈ', 'a', 's', 'r', ' ', 't', 'ˈ', 'ɛ', 'k', 's', 't', ' ', 's', 'ˈ', 'a', 'l', 'a', 'm', ' ', 'ˌ', 'u', 'n', 't', 'u', 'k', ' ', 'k', 'ˈ', 'a', 'l', 'o', ' ', 'l', 'ˈ', 'a', 'p', 't', 'o', 'p', ' ', 'l', 'ˈ', 'a', 'h', '.'], ['h', 'ˈ', 'ɛ', 'l', 'o', ',', ' ', 'ˈ', 'i', 'f', ' ', 'ˈ', 'i', 't', 's', ' ', 'ˈ', 'a', ' ', 'l', 'ˈ', 'a', 'p', 't', 'o', 'p', ',', ' ', 't', 'h', 'ˈ', 'a', 't', 's', ' ', 'f', 'ˈ', 'i', 'n', 'ə', '.'], ['b', 'ˈ', 'i', 'n', 't', 'a', 'ŋ', ' ', 't', 'ˈ', 'a', 's', 'k', ' ', 'r', 'ˈ', 'ɛ', 's', 'p', 'o', 'n', 'd', ' ', 't', 'ˈ', 'o', ' ', 't', 'h', 'ˈ', 'ɛ', ' ', 'ˌ', 'a', 'ˌ', 'ɛ', 's', 'ˈ', 'ɛ', 'r', ' ', 'ˈ', 'i', 'n', 'p', 'u', 't', ' ', 's', 'p', 'ˈ', 'ɛ', 'ə', 'χ', 't', 'ˈ', 'o', 't', 'ˈ', 'ɛ', 'k', 's', 't', ' ', 'w', 'h', 'ˈ', 'i', 'l', 'ə', ' ', 'm', 'a', 'ɪ', 'n', 't', 'ˈ', 'a', 'ɪ', 'n', 'i', 'ŋ', ' ', 't', 'h', 'ˈ', 'ɛ', ' ', 'p', 'ə', 'r', 's', 'ˈ', 'o', 'n', 'a', ' ', 'ˈ', 'a', 'n', 'd', ' ', 't', 'ʃ', 'ˈ', 'o', 'n', 's', 't', 'r', 'a', 'ɪ', 'n', 't', 's', '.'], ['d', 'ˈ', 'u', 'a', '.'], ['i', 'n', 't', 'ˈ', 'ɛ', 'r', 'p', 'r', 'ə', 't', ' ', 't', 'h', 'ˈ', 'ɛ', ' ', 'ˈ', 'i', 'n', 'p', 'u', 't', ' ', 'b', 'ˈ', 'i', 'n', 't', 'a', 'ŋ', ' ', 't', 'h', 'ˈ', 'ɛ', ' ', 'ˈ', 'u', 's', 'ə', 'r', ' ', 'ˈ', 'i', 's', ' ', 'ˈ', 'a', 's', 'k', 'i', 'ŋ', ' ', 'a', 'b', 'ˈ', 'o', 'u', 't', ' ', 'l', 'ˈ', 'a', 'p', 't', 'o', 'p', ' ', 't', 'ʃ', 'ˌ', 'o', 'm', 'p', 'a', 't', 'i', 'b', 'ˈ', 'i', 'l', 'i', 't', 'j', ' ', 'ˈ', 'ɔ', 'r', ' ', 'p', 'r', 'ˌ', 'ɛ', 'f', 'ə', 'r', 'ˈ', 'ɛ', 'n', 't', 'ʃ', 'ə', ' ', 'k', 'ˈ', 'a', 'l', 'o', ' ', 'l', 'ˈ', 'a', 'p', 't', 'o', 'p', ' ', 'l', 'ˈ', 'a', 'h', ' ', 's', 'ˌ', 'a', 'm', 'a', ' ', 'd', 'ˈ', 'ɛ', 'ŋ', 'a', 'n', ' ', 'ˈ', 'i', 'f', ' ', 'ˈ', 'i', 't', 's']]
+15:08:37 [INFO] TTS synthesis complete [1.72s].
+15:08:37 [INFO] Pipeline executed successfully.
+15:08:37 [INFO] Playing response audio...
+15:09:07 [INFO] Terminating ASR llama-server...
+15:09:07 [INFO] ASR llama-server stopped.
+15:09:07 [INFO] Terminating LLM llama-server...
+15:09:07 [INFO] LLM llama-server stopped.

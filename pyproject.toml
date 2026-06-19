@@ -14,5 +14,5 @@ dependencies = [
     "piper-tts",
     "qwen-asr",
     "pygame>=2.6.1",
+    "pydub>=0.25.1",
 ]
-
