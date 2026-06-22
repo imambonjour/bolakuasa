@@ -33,7 +33,7 @@ logging.basicConfig(
 )
 log = logging.getLogger("voice_assistant_gguf")
 
-LLAMA_SERVER_PATH = "./llama-b9118/llama-server"
+LLAMA_SERVER_PATH = "./llama/llama-server"
 LLM_MODEL_PATH = "models/Qwen3.5-2B-Q4_K_M.gguf"
 ASR_MODEL_PATH = "models/asr/Qwen3-ASR-0.6B-Q8_0.gguf"
 ASR_MMPROJ_PATH = "models/asr/mmproj-Qwen3-ASR-0.6B-Q8_0.gguf"

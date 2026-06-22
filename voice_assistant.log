@@ -201,3 +201,89 @@ Thinking Process:
 15:09:07 [INFO] ASR llama-server stopped.
 15:09:07 [INFO] Terminating LLM llama-server...
 15:09:07 [INFO] LLM llama-server stopped.
+07:48:43 [ERROR] An error occurred: Required file not found: ./llama-b9118/llama-server
+Traceback (most recent call last):
+  File "/home/normies/Projects/qwen/fullama.py", line 523, in main
+    pipeline.start_llm_server()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/normies/Projects/qwen/fullama.py", line 205, in start_llm_server
+    self._ensure_file(LLAMA_SERVER_PATH)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/normies/Projects/qwen/fullama.py", line 172, in _ensure_file
+    raise FileNotFoundError(f"Required file not found: {path}")
+FileNotFoundError: Required file not found: ./llama-b9118/llama-server
+07:49:15 [INFO] Starting LLM llama-server: ./llama/llama-server -m models/Qwen3.5-2B-Q4_K_M.gguf --port 8080 --mlock --no-mmap -t 11 -c 2048 --no-jinja
+07:49:15 [INFO] Waiting for LLM llama-server on port 8080...
+07:49:15 [DEBUG] Starting new HTTP connection (1): localhost:8080
+07:49:16 [DEBUG] Starting new HTTP connection (1): localhost:8080
+07:49:16 [DEBUG] http://localhost:8080 "GET /health HTTP/1.1" 503 75
+07:49:17 [DEBUG] Starting new HTTP connection (1): localhost:8080
+07:49:17 [DEBUG] http://localhost:8080 "GET /health HTTP/1.1" 503 75
+07:49:18 [DEBUG] Starting new HTTP connection (1): localhost:8080
+07:49:18 [DEBUG] http://localhost:8080 "GET /health HTTP/1.1" 503 75
+07:49:19 [DEBUG] Starting new HTTP connection (1): localhost:8080
+07:49:19 [DEBUG] http://localhost:8080 "GET /health HTTP/1.1" 200 15
+07:49:19 [INFO] LLM llama-server is ready.
+07:49:19 [INFO] Starting ASR llama-server: ./llama/llama-server -m models/asr/Qwen3-ASR-0.6B-Q8_0.gguf --mmproj models/asr/mmproj-Qwen3-ASR-0.6B-Q8_0.gguf -a qwen3-asr --port 8081 --media-path . --mlock --no-mmap -t 11 -c 2048 --no-webui
+07:49:19 [INFO] Waiting for ASR llama-server on port 8081...
+07:49:19 [DEBUG] Starting new HTTP connection (1): localhost:8081
+07:49:20 [DEBUG] Starting new HTTP connection (1): localhost:8081
+07:49:20 [DEBUG] http://localhost:8081 "GET /health HTTP/1.1" 503 75
+07:49:21 [DEBUG] Starting new HTTP connection (1): localhost:8081
+07:49:21 [DEBUG] http://localhost:8081 "GET /health HTTP/1.1" 200 15
+07:49:21 [INFO] ASR llama-server is ready.
+07:49:21 [INFO] Loading Piper TTS voice model...
+07:49:21 [DEBUG] Guessing voice config path: models/piper/id_ID-news_tts-medium.onnx.json
+07:49:22 [INFO] Piper TTS loaded successfully.
+07:49:22 [INFO] Loading Silero VAD model...
+07:49:22 [INFO] Silero VAD loaded successfully.
+07:49:30 [INFO] Recording started, listening for speech...
+07:49:31 [INFO] Speech detected.
+07:49:33 [INFO] Speech ended. Submitting...
+07:49:33 [INFO] Captured speech successfully.
+07:49:33 [INFO] Running GGUF ASR on: input_record.wav
+07:49:33 [DEBUG] Starting new HTTP connection (1): localhost:8081
+07:49:38 [DEBUG] http://localhost:8081 "POST /v1/audio/transcriptions HTTP/1.1" 200 206
+07:49:38 [INFO] ASR transcription [5.57s]: "language None<asr_text>Karing jamberapa."
+07:49:38 [INFO] Sending prompt to Qwen3.5 via llama-server...
+07:49:38 [DEBUG] Starting new HTTP connection (1): localhost:8080
+07:49:42 [DEBUG] http://localhost:8080 "POST /v1/chat/completions HTTP/1.1" 200 958
+07:49:42 [INFO] LLM response (Raw)  [3.75s]: "<think>
+
+</think>
+
+Tidak, "karing" bukan berarti jamberapa. "Karing" dalam bahasa Indonesia adalah kata untuk **keranjang, tempat, atau wadah** (contoh: keranjang belanja, keranjang jajan).
+
+Jika yang Anda maksud adalah kata lain yang terdengar mirip, mohon konfirmasi agar saya bisa membantu lebih spesifik."
+07:49:42 [INFO] LLM response (Clean) [3.75s]: "Tidak, "karing" bukan berarti jamberapa. "Karing" dalam bahasa Indonesia adalah kata untuk **keranjang, tempat, atau wadah** (contoh: keranjang belanja, keranjang jajan). Jika yang Anda maksud adalah kata lain yang terdengar mirip, mohon konfirmasi agar saya bisa membantu lebih spesifik."
+07:49:42 [INFO] Synthesizing speech via Piper TTS to: output_response.wav
+07:49:42 [DEBUG] text=Tidak, "karing" bukan berarti jamberapa. "Karing" dalam bahasa Indonesia adalah kata untuk **keranjang, tempat, atau wadah** (contoh: keranjang belanja, keranjang jajan). Jika yang Anda maksud adalah kata lain yang terdengar mirip, mohon konfirmasi agar saya bisa membantu lebih spesifik., phonemes=[['t', 'ˈ', 'i', 'd', 'a', 'k', ',', ' ', 'k', 'ˈ', 'a', 'r', 'i', 'ŋ', ' ', 'b', 'ˈ', 'u', 'k', 'a', 'n', ' ', 'b', 'ə', 'r', 'ˈ', 'a', 'r', 't', 'i', ' ', 'd', 'ʒ', 'ˌ', 'a', 'm', 'b', 'ə', 'r', 'ˈ', 'a', 'p', 'a', '.'], ['k', 'ˈ', 'a', 'r', 'i', 'ŋ', ' ', 'd', 'ˈ', 'a', 'l', 'a', 'm', ' ', 'b', 'a', 'h', 'ˈ', 'a', 's', 'a', ' ', 'ˌ', 'i', 'n', 'd', 'o', 'n', 'ə', 's', 'ˈ', 'i', 'a', ' ', 'a', 'd', 'ˌ', 'a', 'l', 'a', 'h', ' ', 'k', 'ˈ', 'a', 't', 'a', ' ', 'ˌ', 'u', 'n', 't', 'u', 'k', ' ', 'k', 'ə', 'r', 'ˈ', 'a', 'n', 'd', 'ʒ', 'a', 'ŋ', ',', ' ', 't', 'ˈ', 'ɛ', 'm', 'p', 'a', 't', ',', ' ', 'ˌ', 'a', 't', 'a', 'ʊ', ' ', 'w', 'ˈ', 'a', 'd', 'a', 'h', ' ', 't', 'ʃ', 'ˈ', 'o', 'n', 't', 'o', 'h', ':', ' ', 'k', 'ə', 'r', 'ˈ', 'a', 'n', 'd', 'ʒ', 'a', 'ŋ', ' ', 'b', 'ə', 'l', 'ˈ', 'a', 'n', 'd', 'ʒ', 'a', ',', ' ', 'k', 'ə', 'r', 'ˈ', 'a', 'n', 'd', 'ʒ', 'a', 'ŋ', ' ', 'd', 'ʒ', 'ˈ', 'a', 'd', 'ʒ', 'a', 'n', '.'], ['d', 'ʒ', 'ˈ', 'i', 'k', 'a', ' ', 'j', 'a', 'ŋ', ' ', 'ˈ', 'a', 'n', 'd', 'a', ' ', 'm', 'ˈ', 'a', 'k', 's', 'u', 'd', ' ', 'a', 'd', 'ˌ', 'a', 'l', 'a', 'h', ' ', 'k', 'ˈ', 'a', 't', 'a', ' ', 'l', 'ˈ', 'a', 'ɪ', 'n', ' ', 'j', 'a', 'ŋ', ' ', 't', 'ə', 'r', 'd', 'ˈ', 'ɛ', 'ŋ', 'a', 'r', ' ', 'm', 'ˈ', 'i', 'r', 'i', 'p', ',', ' ', 'm', 'ˈ', 'o', 'h', 'o', 'n', ' ', 'k', 'ˌ', 'o', 'n', 'f', 'i', 'r', 'm', 'ˈ', 'a', 's', 'i', ' ', 'ˈ', 'a', 'ɡ', 'a', 'r', ' ', 's', 'ˈ', 'a', 'j', 'a', ' ', 'b', 'ˈ', 'i', 's', 'a', ' ', 'm', 'ə', 'm', 'b', 'ˈ', 'a', 'n', 't', 'u', ' ', 'l', 'ˈ', 'ɛ', 'b', 'i', 'h', ' ', 's', 'p', 'ə', 's', 'ˈ', 'i', 'f', 'i', 'k', '.']]
+07:49:43 [INFO] TTS synthesis complete [0.92s].
+07:49:43 [INFO] Pipeline executed successfully.
+07:49:43 [INFO] Playing response audio...
+07:49:57 [INFO] Recording started, listening for speech...
+07:49:58 [INFO] Speech detected.
+07:50:01 [INFO] Speech ended. Submitting...
+07:50:01 [INFO] Captured speech successfully.
+07:50:01 [INFO] Running GGUF ASR on: input_record.wav
+07:50:01 [DEBUG] Starting new HTTP connection (1): localhost:8081
+07:50:06 [DEBUG] http://localhost:8081 "POST /v1/audio/transcriptions HTTP/1.1" 200 209
+07:50:06 [INFO] ASR transcription [5.53s]: "language None<asr_text>Sakarang jamberapa."
+07:50:06 [INFO] Sending prompt to Qwen3.5 via llama-server...
+07:50:07 [DEBUG] Starting new HTTP connection (1): localhost:8080
+07:50:08 [DEBUG] http://localhost:8080 "POST /v1/chat/completions HTTP/1.1" 200 671
+07:50:08 [INFO] LLM response (Raw)  [1.19s]: "<think>
+
+</think>
+
+Sekarang jam 14:30."
+07:50:08 [INFO] LLM response (Clean) [1.19s]: "Sekarang jam 14:30."
+07:50:08 [INFO] Synthesizing speech via Piper TTS to: output_response.wav
+07:50:08 [DEBUG] text=Sekarang jam 14:30., phonemes=[['s', 'ə', 'k', 'ˈ', 'a', 'r', 'a', 'ŋ', ' ', 'd', 'ʒ', 'ˈ', 'a', 'm', ' ', 'ˈ', 'ə', 'm', 'p', 'a', 't', 'b', 'ə', 'l', 'a', 's', ' ', 't', 'ˈ', 'i', 'ɡ', 'a', 'p', 'ˌ', 'u', 'l', 'u', 'h', '.']]
+07:50:08 [INFO] TTS synthesis complete [0.11s].
+07:50:08 [INFO] Pipeline executed successfully.
+07:50:08 [INFO] Playing response audio...
+07:50:15 [INFO] Terminating ASR llama-server...
+07:50:15 [INFO] ASR llama-server stopped.
+07:50:15 [INFO] Terminating LLM llama-server...
+07:50:15 [INFO] LLM llama-server stopped.
